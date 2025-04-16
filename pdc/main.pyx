@@ -132,6 +132,9 @@ def init(name:str="PDC"):
     finalize(_close, _close, pdc_id)
     _is_open = True
 
+def collect_global_cache():
+    cpdc.PDCregion_collect_global_cache()
+
 def _close(pdc_id):
     global _is_open
     if not _is_open:

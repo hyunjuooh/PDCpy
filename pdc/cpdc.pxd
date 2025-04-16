@@ -204,6 +204,9 @@ cdef extern from "pdc_region.h":
     #perr_t PDCregion_transfer_wait_all(pdcid_t *transfer_request_id, size_t size)
     perr_t PDCregion_transfer_close(pdcid_t transfer_request_id)
 
+cdef extern from "pdc_region_cache.h":
+    perr_t PDCregion_collect_global_cache()
+    
 cdef extern from "pdc_query.h":
     #cdef enum pdc_prop_name_t:
     #    PDC_OBJ_NAME
