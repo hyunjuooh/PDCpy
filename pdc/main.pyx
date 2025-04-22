@@ -13,6 +13,13 @@ import ast
 import numpy.typing as npt
 import pickle # this is available in python 3.8+, otherwise you need to pip install pickle
 
+# For prefetching
+# from libc.stdlib cimport malloc, free
+from libc.string cimport strdup
+from cpython.bytes cimport PyBytes_AsString
+from cpython.ref cimport Py_DECREF
+import cython
+
 try:
     from mpi4py import MPI
 except ImportError:
@@ -132,8 +139,22 @@ def init(name:str="PDC"):
     finalize(_close, _close, pdc_id)
     _is_open = True
 
-def collect_global_cache():
-    cpdc.PDCregion_collect_global_cache()
+# def collect_global_cache():
+#     cpdc.PDCregion_collect_global_cache()
+
+def send_prefetch_hint(list obj_py_list):
+    cdef int length = len(obj_py_list)
+    cdef const char **obj_c_array = <const char **> malloc(length * sizeof(const char *))
+    cdef int i
+    for i in range(length):
+        obj_c_array[i] = PyBytes_AsString(obj_py_list[i].encode('utf-8'))
+        
+    cpdc.PDCregion_receive_prefetch_hint(obj_c_array, length)
+    
+    free(obj_c_array)
+
+def prefetch_pdc_region():
+    cpdc.PDCregion_prefetch_by_objid()
 
 def _close(pdc_id):
     global _is_open
