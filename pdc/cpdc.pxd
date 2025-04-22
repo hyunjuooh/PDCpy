@@ -204,8 +204,15 @@ cdef extern from "pdc_region.h":
     #perr_t PDCregion_transfer_wait_all(pdcid_t *transfer_request_id, size_t size)
     perr_t PDCregion_transfer_close(pdcid_t transfer_request_id)
 
-cdef extern from "pdc_region_cache.h":
-    perr_t PDCregion_collect_global_cache()
+# cdef extern from "pdc_region_cache.h": 
+#     void * global_metadata_list
+#     int    global_metadata_list_collected
+    
+#     perr_t PDCregion_collect_global_cache()
+
+cdef extern from "pdc_region_prefetch.h":
+    perr_t PDCregion_receive_prefetch_hint(const char **obj_array, int obj_array_len)
+    perr_t PDCregion_prefetch_by_objid()
     
 cdef extern from "pdc_query.h":
     #cdef enum pdc_prop_name_t:
