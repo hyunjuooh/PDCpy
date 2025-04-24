@@ -6,6 +6,8 @@ from Cython.Build import cythonize
 import shutil
 import subprocess
 
+import numpy
+
 def get_env_or_exit(name):
     try:
         value = os.environ[name]
@@ -52,6 +54,7 @@ extension = Extension(
     include_dirs=[
         os.path.join(PDC_DIR, "include"),
         os.path.join(MERCURY_DIR, "include"),
+        numpy.get_include(),
     ],
     extra_compile_args=mpi_build_args,
     extra_link_args=mpi_link_args
