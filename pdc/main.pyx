@@ -1,5 +1,5 @@
 cimport pdc.cpdc as cpdc
-from pdc.cpdc cimport pdc_var_type_t, int64_t, uint64_t, int16_t, int8_t
+from pdc.cpdc cimport pdc_var_type_t, int64_t, uint64_t, int16_t, int8_t, pdcid_t
 from typing import TypeVar, Generic, NewType, Union
 from enum import Enum
 import os
@@ -15,9 +15,7 @@ import pickle # this is available in python 3.8+, otherwise you need to pip inst
 
 # For prefetching
 from libc.stdlib cimport malloc, free
-from libc.string cimport strdup
 from cpython.bytes cimport PyBytes_AsString
-from cpython.ref cimport Py_DECREF
 import cython
 cimport numpy as np
 
@@ -143,11 +141,32 @@ def init(name:str="PDC"):
 # def collect_global_cache():
 #     cpdc.PDCregion_collect_global_cache()
 
-def send_prefetch_hint(np.ndarray[np.int32_t, ndim=1, mode="c"] arr not None):
-    cdef int[:] obj_c_array = arr
-    cdef int length = arr.shape[0]
+def send_prefetch_hint(list obj_name_list):
+    cdef int length = len(obj_name_list)
+    #cdef const char** obj_c_array = <const char**> malloc(length * sizeof(const char*))
+    cdef pdcid_t* obj_id_array = <pdcid_t*> malloc(length * sizeof(pdcid_t))
     
-    cpdc.PDCregion_receive_prefetch_hint(&obj_c_array[0], length)
+    #cdef list encoded = [s.encode('utf-8') for s in obj_name_list]
+    cdef int i
+    cdef pdcid_t id
+
+    i = 0
+    for s in obj_name_list:
+        id = cpdc.PDCobj_open(s.encode('utf-8'), _get_pdcid())
+        obj_id_array[i] = id
+        i += 1
+    # for i in range(length):
+    #     #obj_c_array[i] = PyBytes_AsString(obj_name_list[i].encode('utf-8'))
+    #     obj_c_array[i] = PyBytes_AsString(encoded[i])
+
+    cpdc.PDCregion_receive_prefetch_hint(obj_id_array, length)
+    free(obj_id_array)
+
+# def send_prefetch_hint(np.ndarray[np.int32_t, ndim=1, mode="c"] arr not None):
+#     cdef int[:] obj_c_array = arr
+#     cdef int length = arr.shape[0]
+    
+#     cpdc.PDCregion_receive_prefetch_hint(&obj_c_array[0], length)
     
     # cdef int length = len(obj_py_list)
     # cdef const char **obj_c_array = <const char **> malloc(length * sizeof(const char *))
@@ -156,18 +175,6 @@ def send_prefetch_hint(np.ndarray[np.int32_t, ndim=1, mode="c"] arr not None):
     #     obj_c_array[i] = PyBytes_AsString(obj_py_list[i].encode('utf-8'))
     
     # free(obj_c_array)
-
-def send_prefetch_dataset(list data_py_list):
-    print(data_py_list)
-    cdef int length = len(data_py_list)
-    cdef const char **data_c_array = <const char **> malloc(length * sizeof(const char *))
-    cdef int i
-    for i in range(length):
-        data_c_array[i] = PyBytes_AsString(data_py_list[i].encode('utf-8'))
-
-    cpdc.PDCregion_receive_dataset(data_c_array, length)
-    
-    free(data_c_array)
 
 def prefetch_pdc_region():
     cpdc.PDCregion_prefetch_by_objid()
