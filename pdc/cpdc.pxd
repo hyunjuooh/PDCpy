@@ -209,9 +209,9 @@ cdef extern from "pdc_region.h":
 #     int    global_metadata_list_collected
     
 #     perr_t PDCregion_collect_global_cache()
-
+    
 cdef extern from "pdc_region_prefetch.h":
-    perr_t PDCregion_receive_prefetch_hint(const pdcid_t* arr, int obj_array_len)
+    perr_t PDCregion_receive_prefetch_hint(char *arr[], pdcid_t *arr2, int obj_array_len)
     perr_t PDCregion_prefetch_by_objid()
     
 cdef extern from "pdc_query.h":
