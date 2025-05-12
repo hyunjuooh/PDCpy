@@ -151,31 +151,10 @@ def send_prefetch_hint(list obj_name_list):
     cdef int i
 
     for i in range(length):
-        #obj_c_array[i] = PyBytes_AsString(obj_name_list[i].encode('utf-8'))
         obj_c_array[i] = PyBytes_AsString(encoded[i])
 
     cpdc.PDCregion_receive_prefetch_hint(obj_c_array, reg_offset_array, length)
     free(obj_c_array)
-    """
-    cdef int length = len(obj_name_list)
-    cdef pdcid_t* obj_id_array = <pdcid_t*> malloc(length * sizeof(pdcid_t))
-    cdef pdcid_t* reg_offset_array = NULL
-    cdef int i
-    cdef pdcid_t obj_id
-    
-    i = 0
-    for s in obj_name_list:
-        checktype(s, 'name', str)
-        obj_id = cpdc.PDCobj_open(s.encode('utf-8'), _get_pdcid())
-        ctrace('obj_open', obj_id, s.encode('utf-8'), _get_pdcid())
-        if obj_id == 0:
-            raise PDCError('object not found or failed to open object')
-        obj_id_array[i] = obj_id
-        i += 1
-
-    cpdc.PDCregion_receive_prefetch_hint(obj_id_array, reg_offset_array, length)
-    free(obj_id_array)
-    """
 
 def prefetch_pdc_region():
     cpdc.PDCregion_prefetch_by_objid()
