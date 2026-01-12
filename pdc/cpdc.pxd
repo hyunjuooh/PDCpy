@@ -103,6 +103,11 @@ cdef extern from "pdc_obj.h":
         PDC_NA = 0
         PDC_READ = 1
         PDC_WRITE = 2
+    ctypedef enum pdc_region_partition_t:
+        PDC_OBJ_STATIC     = 0
+        PDC_REGION_STATIC  = 1
+        PDC_REGION_DYNAMIC = 2
+        PDC_REGION_LOCAL   = 3
 
     pdcid_t PDCobj_create(pdcid_t cont_id, const char *obj_name, pdcid_t obj_create_prop)
     pdcid_t PDCobj_open(const char *obj_name, pdcid_t pdc_id)
@@ -112,7 +117,8 @@ cdef extern from "pdc_obj.h":
     pdc_obj_info *PDCobj_get_info(pdcid_t obj)
     perr_t PDCprop_set_obj_user_id(pdcid_t obj_prop, uint32_t user_id)
     perr_t PDCprop_set_obj_app_name(pdcid_t obj_prop, char *app_name)
-    perr_t PDCprop_set_obj_time_step(pdcid_t obj_prop, uint32_t time_step)    
+    perr_t PDCprop_set_obj_time_step(pdcid_t obj_prop, uint32_t time_step)
+    perr_t PDCprop_set_obj_transfer_region_type(pdcid_t obj_prop, pdc_region_partition_t region_partition)
     perr_t PDCprop_set_obj_dims(pdcid_t obj_prop, PDC_int_t ndim, uint64_t *dims)
     perr_t PDCprop_set_obj_type(pdcid_t obj_prop, pdc_var_type_t type)
     _pdc_obj_info *PDC_obj_get_info(pdcid_t obj_id)
@@ -205,7 +211,8 @@ cdef extern from "pdc_region.h":
     perr_t PDCregion_transfer_close(pdcid_t transfer_request_id)
     
 cdef extern from "pdc_region_prefetch.h":
-    perr_t PDCregion_receive_prefetch_hint(char *arr[], pdcid_t *arr2, int obj_array_len)
+    # perr_t PDCregion_receive_prefetch_hint(char *arr[], pdcid_t *arr2, int obj_array_len)
+    perr_t PDCregion_receive_prefetch_hint(const pdcid_t* arr, const pdcid_t* arr2, int obj_array_len)
     perr_t PDCregion_prefetch_by_objid()
     
 cdef extern from "pdc_query.h":

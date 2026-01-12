@@ -9,7 +9,7 @@ import ctypes
 from pdc.main import uint32, uint64, Type, KVTags, _free_from_int, _get_pdcid, PDCError, PDCError, pdcid, checktype, ctrace
 cimport pdc.cpdc as cpdc
 from cpython.mem cimport PyMem_Malloc as malloc, PyMem_Free as free
-from pdc.cpdc cimport uint32_t, uint64_t, pdc_access_t, pdcid_t, pdc_obj_prop, _pdc_obj_prop, pdc_obj_info, pdc_transfer_status_t, psize_t, _pdc_obj_info, pdc_var_type_t
+from pdc.cpdc cimport uint32_t, uint64_t, pdc_access_t, pdcid_t, pdc_obj_prop, _pdc_obj_prop, pdc_obj_info, pdc_transfer_status_t, psize_t, _pdc_obj_info, pdc_var_type_t, pdc_region_partition_t, PDC_REGION_LOCAL, PDC_OBJ_STATIC, PDC_REGION_DYNAMIC
 from pdc.main cimport malloc_or_memerr
 from . import container
 from . import container as container_
@@ -159,6 +159,8 @@ class Object:
             try:
                 for i in range(length):
                     dims_ptr[i] = dims[i]
+
+                cpdc.PDCprop_set_obj_transfer_region_type(self._id, PDC_OBJ_STATIC)
                 
                 rtn = cpdc.PDCprop_set_obj_dims(self._id, length, dims_ptr)
                 ctrace("prop_set_obj_dims", rtn, self._id, length, dims)
