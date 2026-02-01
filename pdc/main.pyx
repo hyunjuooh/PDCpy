@@ -142,42 +142,28 @@ def init(name:str="PDC"):
 #     cpdc.PDCregion_collect_global_cache()
 
 # Currently supports whole region prefetch
-def send_prefetch_hint(list obj_name_list):
-    cdef int length = len(obj_name_list)
-    #cdef const char** obj_c_array = <const char**> malloc(length * sizeof(const char*))
-    cdef pdcid_t* obj_id_array = <pdcid_t*> malloc(length * sizeof(pdcid_t))
-    cdef pdcid_t* reg_offset_array = NULL
-    
-    #cdef list encoded = [s.encode('utf-8') for s in obj_name_list]
-    cdef int i
-    cdef pdcid_t id
-
-    i = 0
-    for s in obj_name_list:
-        id = cpdc.PDCobj_open(s.encode('utf-8'), _get_pdcid())
-        obj_id_array[i] = id
-        i += 1
-
-    cpdc.PDCregion_receive_prefetch_hint(obj_id_array, reg_offset_array, length)
-    free(obj_id_array)
-    
 # def send_prefetch_hint(list obj_name_list):
-#     #cdef int length = len(obj_name_list)
-#     cdef pdcid_t* obj_id_array = NULL
-#     cdef pdcid_t* reg_offset_array = NULL
+#     cdef int length = len(obj_name_list)
 #     #cdef const char** obj_c_array = <const char**> malloc(length * sizeof(const char*))
+#     cdef pdcid_t* obj_id_array = <pdcid_t*> malloc(length * sizeof(pdcid_t))
+#     cdef pdcid_t* reg_offset_array = NULL
     
 #     #cdef list encoded = [s.encode('utf-8') for s in obj_name_list]
 #     cdef int i
+#     cdef pdcid_t id
 
-#     for i in range(length):
-#         obj_c_array[i] = PyBytes_AsString(encoded[i])
+#     i = 0
+#     for s in obj_name_list:
+#         id = cpdc.PDCobj_open(s.encode('utf-8'), _get_pdcid())
+#         obj_id_array[i] = id
+#         i += 1
 
-#     cpdc.PDCregion_receive_prefetch_hint(obj_c_array, reg_offset_array, length)
-#     free(obj_c_array)
+#     cpdc.PDCregion_receive_prefetch_hint(obj_id_array, reg_offset_array, length)
+#     free(obj_id_array)
+    
 
-def prefetch_pdc_region():
-    cpdc.PDCregion_prefetch_by_objid()
+# def prefetch_pdc_region():
+#     cpdc.PDCregion_prefetch_by_objid()
 
 def _close(pdc_id):
     global _is_open
