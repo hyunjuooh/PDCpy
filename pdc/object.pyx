@@ -385,6 +385,7 @@ class Object:
                     # sizes, offsets = remoteRegion._get_sizes_offsets(object.dims)
                     # region_id, sizes = remoteRegion._construct_with(sizes)
                     out = np.empty(sizes, dtype=object.type.as_numpy_type())
+                    # out.fill(0)
                     transfer_id = cpdc.PDCregion_transfer_create(<void *> <size_t> out.ctypes.data, type(self).RequestType.GET.value, object._id, local_region_id, region_id)
                     ctrace('region_transfer_create', transfer_id, out, type(self).RequestType.GET, object._id, local_region_id, region_id)
                     if transfer_id == 0:
